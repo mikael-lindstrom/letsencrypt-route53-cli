@@ -172,6 +172,10 @@ export default class Acme {
     return this.signedRequest(this.accountKey, url, payload)
   }
 
+  async getIssuerCert(url) {
+    return Request.get(url);
+  }
+
   revokeCert(certificate) {
     let url = CA + "/acme/revoke-cert";
 

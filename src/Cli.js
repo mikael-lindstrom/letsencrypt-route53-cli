@@ -3,7 +3,6 @@ import path from 'path'
 import Route53 from './Route53.js'
 import Config from './Config.js'
 import Acme from './Acme.js'
-import Request from './Request.js'
 
 export default class Cli {
 
@@ -110,7 +109,7 @@ export default class Cli {
     }
 
     this.acme.initalizeKey(accountKey);
-
+/*
     console.log(" * Finding hostedZoneId");
     let hostedZoneId = await this.r53.findHostedZoneId(domain);
     if (!hostedZoneId) {
@@ -133,7 +132,7 @@ export default class Cli {
     console.log(" * Deleting challange txt record");
     let deleteId = await this.r53.deleteChallengeTxtRecord(hostedZoneId, domain, challenge.hashedKeyAuth);
     await this.waitForRecord(deleteId);
-
+*/
     let timestamp = new Date().toISOString().replace(/[-:..]/g,'');
     let certDirectory = this.config.getCertDirectory(domain);
     this.mkdirSync(certDirectory);
@@ -155,7 +154,15 @@ export default class Cli {
     let certPath = path.join(certDirectory, "cert-" + timestamp + ".pem");
     let cert = this.acme.convertDERtoPEM(certResponse.body);
     fs.writeFileSync(certPath, cert);
-    console.log(" * Saved certificate to to: " + certPath);
+    console.log(" * Saved certificate to: " + certPath);
+
+    console.log(" * Requesting certificate chain");
+    let issuerCertUrl = certResponse.headers.link.match(/.*<(.*)>;rel="up".*/)[1];
+    let issuerCertResponse = await this.acme.getIssuerCert(issuerCertUrl);
+    let issuerCertPath = path.join(certDirectory, "chain-" + timestamp + ".pem");
+    let issuerCert = this.acme.convertDERtoPEM(issuerCertResponse.body);
+    fs.writeFileSync(issuerCertPath, issuerCert);
+    console.log(" * Saved chain to: " + issuerCertPath);
   }
 
   async revokeCert(certificate) {
