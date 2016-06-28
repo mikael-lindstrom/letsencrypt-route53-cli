@@ -70,7 +70,8 @@ export default class Cli {
       console.log(" * Account key already generated, skipping");
     } else {
       console.log(" * No account key found, generating a new key");
-      let accountKey = this.acme.generatePrivateKey();
+      accountKey = this.acme.generatePrivateKey();
+      let accountKeyPath = this.config.getAccountKeyPath();
       fs.writeFileSync(accountKeyPath, accountKey);
       console.log(" * Account key saved to: " + accountKeyPath);
     }
@@ -93,7 +94,7 @@ export default class Cli {
     let newAgreement = await this.acme.hasNewAgreement(registrationUrl);
     if (newAgreement){
       console.log(' * New agreement found, accepting');
-      console.log(await this.acme.updateRegistration(registrationUrl, newAgreement));
+      let updateRegistrationResponse = await this.acme.updateRegistration(registrationUrl, newAgreement);
       // TODO Check for statusCode === 202 (Accepted)
     }
     console.log(" * Setup done");
@@ -109,7 +110,7 @@ export default class Cli {
     }
 
     this.acme.initalizeKey(accountKey);
-/*
+
     console.log(" * Finding hostedZoneId");
     let hostedZoneId = await this.r53.findHostedZoneId(domain);
     if (!hostedZoneId) {
@@ -132,7 +133,7 @@ export default class Cli {
     console.log(" * Deleting challange txt record");
     let deleteId = await this.r53.deleteChallengeTxtRecord(hostedZoneId, domain, challenge.hashedKeyAuth);
     await this.waitForRecord(deleteId);
-*/
+
     let timestamp = new Date().toISOString().replace(/[-:..]/g,'');
     let certDirectory = this.config.getCertDirectory(domain);
     this.mkdirSync(certDirectory);
