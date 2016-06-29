@@ -3,8 +3,9 @@
 Command-line interface to create and revoke certificates using letsencrypt. Currently under heavy development.
 
 ### Installation
-Currently this is not pushed to npm.
+Currently this is not pushed to npm. Tested on node 5.x.
 ```
+npm install
 npm install -g .
 ```
 

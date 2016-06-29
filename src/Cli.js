@@ -59,7 +59,6 @@ export default class Cli {
     // TODO add varning when you change email
     this.config.loadConfigFile();
     if (email !== this.config.getEmail()) {
-      console.log(this.config.getEmail());
       console.log(" * Set account email to: " + email);
       this.config.setEmail(email);
     }
