@@ -99,7 +99,7 @@ export default class Cli {
     console.log(" * Setup done");
   }
 
-  async newCert(domain) {
+  async newCert(domain, zone) {
     console.log(" * Requesting certificate for: " + domain);
 
     let accountKey = this.getAccountKey();
@@ -110,10 +110,17 @@ export default class Cli {
 
     this.acme.initalizeKey(accountKey);
 
-    console.log(" * Finding hostedZoneId");
-    let hostedZoneId = await this.r53.findHostedZoneId(domain);
+    let hostedZoneName;
+    if (zone) {
+      hostedZoneName = zone;
+    } else {
+      hostedZoneName = domain;
+    }
+
+    console.log(" * Finding hostedZoneId for: " + hostedZoneName);
+    let hostedZoneId = await this.r53.findHostedZoneId(hostedZoneName);
     if (!hostedZoneId) {
-      console.log(" * Could not find hosted zone for: " + domain);
+      console.log(" * Could not find hosted zone for: " + hostedZoneName);
       process.exit(1);
     }
     console.log(" * Found hostedZoneId: " + hostedZoneId);

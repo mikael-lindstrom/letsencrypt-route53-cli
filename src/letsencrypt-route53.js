@@ -25,8 +25,9 @@ commander
 commander
   .command('new-cert [domain]')
   .description('Requests a new certificate')
+  .option('-z, --hostedZoneName <hostedZoneName>', 'HostedZoneName, used if it differs from the certificate domain')
   .action((domain, options) => {
-    cli.newCert(domain);
+    cli.newCert(domain, options.hostedZoneName);
   });
 
 // TODO add support for revoking using private key
