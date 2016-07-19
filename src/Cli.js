@@ -152,7 +152,7 @@ export default class Cli {
 
     console.log(" * Generating CSR");
     let csr = this.acme.generateCSR(certKey, domain);
-    let csrPath = path.join(certDirectory, "csr-" + timestamp + ".pem");
+    let csrPath = path.join(certDirectory, "csr-" + timestamp + ".csr");
     fs.writeFileSync(csrPath, csr);
     console.log(" * Saved CSR to: " + csrPath);
 
